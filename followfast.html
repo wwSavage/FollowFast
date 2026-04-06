@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FollowFast — AI Lead Follow-Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1220;
+    --bg3: #111827;
+    --card: #131c2e;
+    --card2: #1a2540;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --blue: #3b82f6;
+    --blue2: #60a5fa;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --text: #f0f4ff;
+    --text2: #8896b3;
+    --text3: #4f6080;
+    --glow: rgba(59,130,246,0.15);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 20px rgba(59,130,246,0.4);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff, var(--blue2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  .sidebar-nav {
+    padding: 16px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text3);
+    padding: 8px 8px 4px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text2);
+    position: relative;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(59,130,246,0.12);
+    color: var(--blue2);
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: var(--blue);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--blue);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .sidebar-bottom {
+    padding: 16px 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .user-card:hover { background: rgba(255,255,255,0.04); }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-role { font-size: 11px; color: var(--text3); }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 13px;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+
+  .logout-btn:hover { color: var(--red); background: rgba(239,68,68,0.08); }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 16px;
+    background: var(--bg2);
+  }
+
+  .topbar-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .topbar-sub { font-size: 13px; color: var(--text3); margin-left: 4px; }
+
+  .topbar-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: var(--font-body);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), #2563eb);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+
+  .btn-ghost {
+    background: rgba(255,255,255,0.05);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* DASHBOARD */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .stat-card.blue::before { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--green), #34d399); }
+  .stat-card.yellow::before { background: linear-gradient(90deg, var(--yellow), #fbbf24); }
+  .stat-card.purple::before { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+
+  .stat-label { font-size: 12px; color: var(--text3); font-weight: 500; letter-spacing: 0.3px; margin-bottom: 10px; }
+  .stat-value { font-family: var(--font-display); font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .stat-change { font-size: 12px; color: var(--green); margin-top: 6px; }
+  .stat-icon { position: absolute; top: 20px; right: 20px; font-size: 22px; opacity: 0.3; }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+  }
+
+  .dash-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .dash-card-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .activity-text { font-size: 13px; color: var(--text2); }
+  .activity-name { color: var(--text); font-weight: 500; }
+  .activity-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .pipeline-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pipeline-bar-item { display: flex; align-items: center; gap: 10px; }
+  .pipeline-bar-label { font-size: 12px; color: var(--text2); width: 100px; flex-shrink: 0; }
+  .pipeline-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .pipeline-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+  .pipeline-bar-count { font-size: 12px; color: var(--text3); width: 24px; text-align: right; }
+
+  /* PIPELINE */
+  .pipeline-view { height: 100%; }
+
+  .kanban-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    height: calc(100vh - 140px);
+  }
+
+  .kanban-board::-webkit-scrollbar { height: 6px; }
+  .kanban-board::-webkit-scrollbar-track { background: transparent; }
+  .kanban-board::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  .kanban-col {
+    min-width: 280px;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .kanban-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .kanban-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .kanban-title { font-size: 13px; font-weight: 700; font-family: var(--font-display); }
+  .kanban-count {
+    margin-left: auto;
+    background: rgba(255,255,255,0.08);
+    color: var(--text2);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .kanban-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 2px;
+  }
+
+  .kanban-cards::-webkit-scrollbar { width: 4px; }
+  .kanban-cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .lead-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lead-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+
+  .lead-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .lead-card.blue::before { background: var(--blue); }
+  .lead-card.cyan::before { background: var(--cyan); }
+  .lead-card.green::before { background: var(--green); }
+  .lead-card.yellow::before { background: var(--yellow); }
+  .lead-card.purple::before { background: var(--purple); }
+  .lead-card.red::before { background: var(--red); }
+
+  .lead-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .lead-name { font-size: 14px; font-weight: 600; }
+  .lead-source { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  .ai-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ai-badge.active { background: rgba(59,130,246,0.15); color: var(--blue2); border: 1px solid rgba(59,130,246,0.3); }
+  .ai-badge.awaiting { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+  .ai-badge.booked { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+  .ai-badge.manual { background: rgba(139,92,246,0.12); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25); }
+
+  .lead-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .lead-time { font-size: 11px; color: var(--text3); }
+
+  .lead-actions {
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  .lead-action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(255,255,255,0.04);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+    font-family: var(--font-body);
+  }
+
+  .lead-action-btn:hover { background: rgba(59,130,246,0.1); color: var(--blue2); border-color: rgba(59,130,246,0.2); }
+
+  /* CHAT MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .chat-modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    width: 560px;
+    height: 680px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg3);
+  }
+
+  .chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .chat-lead-name { font-size: 15px; font-weight: 700; }
+  .chat-lead-meta { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+  .chat-header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+
+  .icon-btn:hover { background: rgba(255,255,255,0.1); }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .message { display: flex; gap: 10px; max-width: 85%; }
+  .message.ai { align-self: flex-start; }
+  .message.user { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .msg-avatar.ai-av { background: linear-gradient(135deg, var(--blue), var(--cyan)); }
+  .msg-avatar.user-av { background: linear-gradient(135deg, var(--purple), #ec4899); }
+
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .message.ai .msg-bubble {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+    color: var(--text);
+  }
+
+  .message.user .msg-bubble {
+    background: linear-gradient(135deg, var(--blue), #2563eb);
+    color: white;
+    border-top-right-radius: 4px;
+  }
+
+  .msg-time { font-size: 10px; color: var(--text3); margin-top: 4px; }
+  .message.user .msg-time { text-align: right; }
+
+  .ai-label {
+    font-size: 10px;
+    color: var(--blue2);
+    font-weight: 600;
+    margin-bottom: 3px;
+    letter-spacing: 0.3px;
+  }
+
+  .chat-input-area {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg3);
+  }
+
+  .chat-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .toolbar-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text2);
+    transition: all 0.15s;
+    font-family: var(--font-body);
+  }
+
+  .toolbar-btn:hover { background: rgba(59,130,246,0.1); color: var(--blue2); }
+  .toolbar-btn.active-mode { background: rgba(139,92,246,0.15); color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+
+  .chat-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--font-body);
+    resize: none;
+    outline: none;
+    min-height: 42px;
+    max-height: 100px;
+    transition: border-color 0.15s;
+  }
+
+  .chat-input:focus { border-color: var(--blue); }
+  .chat-input::placeholder { color: var(--text3); }
+
+  .send-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue), #2563eb);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+  }
+
+  .send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59,130,246,0.4); }
+
+  /* ADD LEAD MODAL */
+  .add-modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    width: 480px;
+    overflow: hidden;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+    animation: slideUp 0.2s ease;
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+  .modal-close { font-size: 18px; cursor: pointer; color: var(--text3); transition: color 0.15s; }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.3px; }
+
+  .form-input, .form-select, .form-textarea {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--font-body);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--blue); }
+  .form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
+  .form-select { cursor: pointer; }
+  .form-select option { background: var(--bg3); }
+  .form-textarea { resize: none; min-height: 80px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* SETTINGS */
+  .settings-grid { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+
+  .settings-nav { display: flex; flex-direction: column; gap: 4px; }
+
+  .settings-nav-item {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .settings-nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .settings-nav-item.active { background: rgba(59,130,246,0.1); color: var(--blue2); }
+
+  .settings-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+
+  .settings-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-label { font-size: 14px; font-weight: 500; }
+  .settings-row-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  .toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--border2);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--blue); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* PROFILE */
+  .profile-header {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(6,182,212,0.1));
+  }
+
+  .profile-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 26px;
+    position: relative;
+    z-index: 1;
+    border: 3px solid var(--bg2);
+    box-shadow: 0 0 25px rgba(59,130,246,0.3);
+    flex-shrink: 0;
+  }
+
+  .profile-info { position: relative; z-index: 1; }
+  .profile-name { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+  .profile-business { font-size: 14px; color: var(--text2); margin-top: 3px; }
+  .profile-joined { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .profile-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .profile-stat-value { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+  .profile-stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+  .plan-card {
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(6,182,212,0.08));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .plan-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--blue2); }
+  .plan-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+  /* SCROLLBAR */
+  .content::-webkit-scrollbar { width: 6px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .notif.show { transform: translateY(0); opacity: 1; }
+  .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+  .empty-col {
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">FollowFast</div>
+      <div class="logo-sub">AI LEAD FOLLOW-UP</div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="showView('dashboard', this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showView('pipeline', this)">
+      <span class="nav-icon">🗂️</span> Pipeline
+      <span class="nav-badge">28</span>
+    </div>
+
+    <div class="nav-section">Account</div>
+    <div class="nav-item" onclick="showView('settings', this)">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+    <div class="nav-item" onclick="showView('profile', this)">
+      <span class="nav-icon">👤</span> Profile
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card" onclick="showView('profile', null)">
+      <div class="user-avatar">MB</div>
+      <div>
+        <div class="user-name">Mike's Plumbing</div>
+        <div class="user-role">Business Owner</div>
+      </div>
+    </div>
+    <div class="logout-btn">
+      <span>→</span> Log out
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar" id="topbar">
+    <div>
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
+      <span class="topbar-sub" id="topbar-sub">Welcome back, Mike 👋</span>
+    </div>
+    <div class="topbar-actions" id="topbar-actions">
+      <button class="btn btn-ghost">📥 Export</button>
+      <button class="btn btn-primary" onclick="openAddLead()">+ Add New Lead</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">👥</div>
+          <div class="stat-label">TOTAL LEADS</div>
+          <div class="stat-value">28</div>
+          <div class="stat-change">↑ +4 this week</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🤖</div>
+          <div class="stat-label">AI ACTIVE</div>
+          <div class="stat-value">14</div>
+          <div class="stat-change">↑ 50% of leads</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-icon">📅</div>
+          <div class="stat-label">APPOINTMENTS</div>
+          <div class="stat-value">6</div>
+          <div class="stat-change">↑ +2 from last week</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">CLOSED</div>
+          <div class="stat-value">3</div>
+          <div class="stat-change">↑ 10.7% close rate</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dash-card">
+          <div class="dash-card-title">
+            Recent Activity
+            <span style="font-size:11px;color:var(--text3);font-weight:400;">Today</span>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--blue)"></div>
+            <div>
+              <div class="activity-text"><span class="activity-name">AI</span> sent follow-up to <span class="activity-name">Marcus Reid</span></div>
+              <div class="activity-time">2 minutes ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--green)"></div>
+            <div>
+              <div class="activity-text"><span class="activity-name">Danielle Moore</span> booked an appointment</div>
+              <div class="activity-time">18 minutes ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--yellow)"></div>
+            <div>
+              <div class="activity-text"><span class="activity-name">Sarah Kim</span> replied — awaiting follow-up</div>
+              <div class="activity-time">1 hour ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--purple)"></div>
+            <div>
+              <div class="activity-text">New lead <span class="activity-name">Alex Turner</span> added via Google</div>
+              <div class="activity-time">3 hours ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--cyan)"></div>
+            <div>
+              <div class="activity-text"><span class="activity-name">Tom Bailey</span> marked as Closed ✓</div>
+              <div class="activity-time">2 days ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-title">Pipeline Breakdown</div>
+          <div class="pipeline-bar">
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">New</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:60%;background:var(--blue)"></div>
+              </div>
+              <div class="pipeline-bar-count">12</div>
+            </div>
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">Contacted</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:35%;background:var(--cyan)"></div>
+              </div>
+              <div class="pipeline-bar-count">7</div>
+            </div>
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">Qualified</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:20%;background:var(--green)"></div>
+              </div>
+              <div class="pipeline-bar-count">4</div>
+            </div>
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">Appt. Booked</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:15%;background:var(--yellow)"></div>
+              </div>
+              <div class="pipeline-bar-count">3</div>
+            </div>
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">Closed</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:10%;background:var(--purple)"></div>
+              </div>
+              <div class="pipeline-bar-count">2</div>
+            </div>
+            <div class="pipeline-bar-item">
+              <div class="pipeline-bar-label">Lost</div>
+              <div class="pipeline-bar-track">
+                <div class="pipeline-bar-fill" style="width:5%;background:var(--red)"></div>
+              </div>
+              <div class="pipeline-bar-count">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE VIEW -->
+    <div class="view" id="view-pipeline">
+      <div class="kanban-board">
+
+        <!-- NEW -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--blue)"></div>
+            <div class="kanban-title">New</div>
+            <div class="kanban-count">3</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card blue" onclick="openChat('Marcus Reid','Google','AI Active','active')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Marcus Reid</div><div class="lead-source">📍 Google</div></div>
+                <div class="ai-badge active">AI Active</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">2 hours ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Marcus Reid','Google','AI Active','active')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="lead-card blue" onclick="openChat('Alex Turner','Referral','AI Active','active')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Alex Turner</div><div class="lead-source">📍 Referral</div></div>
+                <div class="ai-badge active">AI Active</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">3 hours ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Alex Turner','Referral','AI Active','active')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="lead-card blue" onclick="openChat('Priya Sharma','Facebook','Awaiting Reply','awaiting')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Priya Sharma</div><div class="lead-source">📍 Facebook</div></div>
+                <div class="ai-badge awaiting">Awaiting Reply</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">5 hours ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Priya Sharma','Facebook','Awaiting Reply','awaiting')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTACTED -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--cyan)"></div>
+            <div class="kanban-title">Contacted</div>
+            <div class="kanban-count">2</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card cyan" onclick="openChat('Sarah Kim','Facebook','Awaiting Reply','awaiting')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Sarah Kim</div><div class="lead-source">📍 Facebook</div></div>
+                <div class="ai-badge awaiting">Awaiting Reply</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">5 hours ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Sarah Kim','Facebook','Awaiting Reply','awaiting')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="lead-card cyan" onclick="openChat('Leilani Kahananui','Website','AI Active','active')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Leilani Kahananui</div><div class="lead-source">📍 Website</div></div>
+                <div class="ai-badge active">AI Active</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">1 day ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Leilani Kahananui','Website','AI Active','active')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUALIFIED -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--green)"></div>
+            <div class="kanban-title">Qualified</div>
+            <div class="kanban-count">2</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card green" onclick="openChat('James Tran','Referral','Appointment Booked','booked')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">James Tran</div><div class="lead-source">📍 Referral</div></div>
+                <div class="ai-badge booked">Appt. Booked</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">1 day ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('James Tran','Referral','Appointment Booked','booked')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="lead-card green" onclick="openChat('Olga Petrovska','Google','AI Active','active')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Olga Petrovska</div><div class="lead-source">📍 Google</div></div>
+                <div class="ai-badge active">AI Active</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">2 days ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Olga Petrovska','Google','AI Active','active')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APPOINTMENT BOOKED -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--yellow)"></div>
+            <div class="kanban-title">Appt. Booked</div>
+            <div class="kanban-count">2</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card yellow" onclick="openChat('Danielle Moore','Website','Appointment Booked','booked')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Danielle Moore</div><div class="lead-source">📍 Website</div></div>
+                <div class="ai-badge booked">Appt. Booked</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">3 hours ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Danielle Moore','Website','Appointment Booked','booked')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="lead-card yellow" onclick="openChat('Miroslava Dvorak','Referral','Appointment Booked','booked')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Miroslava Dvorak</div><div class="lead-source">📍 Referral</div></div>
+                <div class="ai-badge booked">Appt. Booked</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">2 days ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Miroslava Dvorak','Referral','Appointment Booked','booked')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLOSED -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--purple)"></div>
+            <div class="kanban-title">Closed</div>
+            <div class="kanban-count">1</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card purple" onclick="openChat('Tom Bailey','Phone','Manual Takeover','manual')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Tom Bailey</div><div class="lead-source">📍 Phone</div></div>
+                <div class="ai-badge manual">Manual</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">2 days ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Tom Bailey','Phone','Manual Takeover','manual')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOST -->
+        <div class="kanban-col">
+          <div class="kanban-header">
+            <div class="kanban-dot" style="background:var(--red)"></div>
+            <div class="kanban-title">Lost</div>
+            <div class="kanban-count">1</div>
+          </div>
+          <div class="kanban-cards">
+            <div class="lead-card red" onclick="openChat('Linda Chen','Other','Awaiting Reply','awaiting')">
+              <div class="lead-card-top">
+                <div><div class="lead-name">Linda Chen</div><div class="lead-source">📍 Other</div></div>
+                <div class="ai-badge awaiting">Awaiting Reply</div>
+              </div>
+              <div class="lead-meta"><span style="font-size:11px">🕐</span><span class="lead-time">4 days ago</span></div>
+              <div class="lead-actions">
+                <button class="lead-action-btn" onclick="event.stopPropagation();openChat('Linda Chen','Other','Awaiting Reply','awaiting')">💬 View Chat</button>
+                <button class="lead-action-btn" onclick="event.stopPropagation()">✏️ Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="settings-grid">
+        <div class="settings-nav">
+          <div class="settings-nav-item active" onclick="this.parentElement.querySelectorAll('.settings-nav-item').forEach(x=>x.classList.remove('active'));this.classList.add('active')">⚙️ General</div>
+          <div class="settings-nav-item" onclick="this.parentElement.querySelectorAll('.settings-nav-item').forEach(x=>x.classList.remove('active'));this.classList.add('active')">🤖 AI Settings</div>
+          <div class="settings-nav-item" onclick="this.parentElement.querySelectorAll('.settings-nav-item').forEach(x=>x.classList.remove('active'));this.classList.add('active')">🔔 Notifications</div>
+          <div class="settings-nav-item" onclick="this.parentElement.querySelectorAll('.settings-nav-item').forEach(x=>x.classList.remove('active'));this.classList.add('active')">🔒 Security</div>
+          <div class="settings-nav-item" onclick="this.parentElement.querySelectorAll('.settings-nav-item').forEach(x=>x.classList.remove('active'));this.classList.add('active')">💳 Billing</div>
+        </div>
+
+        <div class="settings-panel">
+          <div class="settings-section-title">General Settings</div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Business Name</div>
+              <div class="settings-row-sub">Displayed across your pipeline</div>
+            </div>
+            <input class="form-input" style="width:200px" value="Mike's Plumbing Co.">
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">AI Auto-Response</div>
+              <div class="settings-row-sub">Let AI handle initial lead responses</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Response Delay</div>
+              <div class="settings-row-sub">Wait before AI sends first message</div>
+            </div>
+            <select class="form-select" style="width:140px">
+              <option>Instant</option>
+              <option selected>2 minutes</option>
+              <option>5 minutes</option>
+              <option>15 minutes</option>
+            </select>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Lead Notifications</div>
+              <div class="settings-row-sub">Get notified for new leads</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Dark Mode</div>
+              <div class="settings-row-sub">Always on for FollowFast</div>
+            </div>
+            <div class="toggle on"></div>
+          </div>
+
+          <div style="margin-top:20px">
+            <button class="btn btn-primary" onclick="showNotif('Settings saved!')">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE VIEW -->
+    <div class="view" id="view-profile">
+      <div class="profile-header">
+        <div class="profile-avatar-large">MB</div>
+        <div class="profile-info">
+          <div class="profile-name">Mike's Plumbing Co.</div>
+          <div class="profile-business">Business Owner · Toronto, ON</div>
+          <div class="profile-joined">Member since March 2026</div>
+        </div>
+        <div style="margin-left:auto;position:relative;z-index:1">
+          <button class="btn btn-ghost" onclick="showNotif('Profile updated!')">✏️ Edit Profile</button>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-value" style="color:var(--blue2)">28</div>
+          <div class="profile-stat-label">Total Leads</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" style="color:var(--green)">6</div>
+          <div class="profile-stat-label">Appointments</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" style="color:var(--purple)">3</div>
+          <div class="profile-stat-label">Closed Deals</div>
+        </div>
+      </div>
+
+      <div class="plan-card">
+        <div>
+          <div class="plan-name">⚡ Pro Plan</div>
+          <div class="plan-sub">Unlimited leads · AI responses · Priority support</div>
+        </div>
+        <button class="btn btn-primary">Manage Plan</button>
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="dash-card">
+          <div class="dash-card-title">Account Details</div>
+          <div class="settings-row">
+            <div class="settings-row-label">Email</div>
+            <span style="font-size:13px;color:var(--text2)">mike@mikesplumbing.ca</span>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-label">Phone</div>
+            <span style="font-size:13px;color:var(--text2)">+1 (416) 555-0192</span>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-label">Industry</div>
+            <span style="font-size:13px;color:var(--text2)">Plumbing & HVAC</span>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-label">API Status</div>
+            <span style="font-size:13px;color:var(--green)">✓ Connected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div class="modal-overlay" id="chat-modal-overlay" onclick="if(event.target===this)closeChat()">
+  <div class="chat-modal">
+    <div class="chat-header">
+      <div class="chat-avatar" id="chat-avatar">MR</div>
+      <div>
+        <div class="chat-lead-name" id="chat-name">Marcus Reid</div>
+        <div class="chat-lead-meta" id="chat-meta">Google · AI Active</div>
+      </div>
+      <div class="chat-header-actions">
+        <div class="icon-btn" title="Take Over" onclick="toggleManual()">🤝</div>
+        <div class="icon-btn" title="Edit Lead">✏️</div>
+        <div class="icon-btn" onclick="closeChat()">✕</div>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages injected by JS -->
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chat-toolbar">
+        <button class="toolbar-btn active-mode" id="ai-mode-btn" onclick="setMode('ai')">🤖 AI Mode</button>
+        <button class="toolbar-btn" id="manual-mode-btn" onclick="setMode('manual')">✋ Manual</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" placeholder="Type a message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div class="modal-overlay" id="add-modal-overlay" onclick="if(event.target===this)closeAddLead()">
+  <div class="add-modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Lead</div>
+      <div class="modal-close" onclick="closeAddLead()">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">CONTACT NAME</label>
+          <input class="form-input" placeholder="e.g. John Smith" id="new-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PHONE NUMBER</label>
+          <input class="form-input" placeholder="e.g. 416 555 0100" id="new-phone">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">LEAD SOURCE</label>
+          <select class="form-select" id="new-source">
+            <option value="">Select a source</option>
+            <option>Google</option>
+            <option>Facebook</option>
+            <option>Referral</option>
+            <option>Website</option>
+            <option>Phone</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">INDUSTRY</label>
+          <select class="form-select">
+            <option value="">Select industry</option>
+            <option>Plumbing</option>
+            <option>HVAC</option>
+            <option>Electrical</option>
+            <option>Landscaping</option>
+            <option>Cleaning</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">INITIAL NOTES</label>
+        <textarea class="form-textarea" placeholder="Any details about this lead..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAddLead()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <div class="notif-dot"></div>
+  <span id="notif-text">Saved successfully!</span>
+</div>
+
+<script>
+  const conversations = {
+    default: [
+      { role: 'ai', text: "Hi! Thanks for reaching out. I'm the AI assistant for Mike's Plumbing Co. How can we help you today?", time: '2:14 PM' },
+      { role: 'user', text: "Hey, I've got a leaking pipe under my kitchen sink. Pretty bad drip.", time: '2:16 PM' },
+      { role: 'ai', text: "Sorry to hear that! A leaking pipe under the sink can definitely cause damage if left too long. We'd love to get that fixed for you ASAP. Are you available for a visit this week?", time: '2:16 PM' },
+      { role: 'user', text: "Yeah Thursday or Friday works for me.", time: '2:18 PM' },
+      { role: 'ai', text: "Perfect! I have Thursday at 10am or Friday at 2pm available. Which works better for you? I'll get Mike booked in right away 🔧", time: '2:18 PM' },
+    ],
+    booked: [
+      { role: 'ai', text: "Hi! Thanks for reaching out to Mike's Plumbing. What can we help you with today?", time: '9:00 AM' },
+      { role: 'user', text: "Looking to get a new water heater installed.", time: '9:05 AM' },
+      { role: 'ai', text: "Great! We do water heater installs all the time. What size is your current unit and is it gas or electric?", time: '9:05 AM' },
+      { role: 'user', text: "It's a 40 gallon gas unit, about 12 years old.", time: '9:08 AM' },
+      { role: 'ai', text: "That's a great time to replace it before it fails completely! I've booked you in for a free estimate. Mike will be there Thursday at 10am. You'll get a confirmation text shortly ✅", time: '9:09 AM' },
+    ],
+    awaiting: [
+      { role: 'ai', text: "Hi there! This is the AI assistant for Mike's Plumbing. We noticed you filled out our contact form. What can we help you with?", time: '11:30 AM' },
+      { role: 'user', text: "Yeah I need someone to look at my bathroom. Multiple issues.", time: '11:45 AM' },
+      { role: 'ai', text: "Of course! We handle all bathroom plumbing — drains, fixtures, pipes, you name it. What are the main issues you're seeing?", time: '11:45 AM' },
+    ],
+    manual: [
+      { role: 'ai', text: "Hi! Thanks for calling Mike's Plumbing. How can we help?", time: '10:00 AM' },
+      { role: 'user', text: "I called about the burst pipe quote you gave me last week.", time: '10:02 AM' },
+      { role: 'ai', text: "Of course! Let me pull that up for you. One moment please.", time: '10:02 AM' },
+      { role: 'user', text: "Actually Mike already handled it. We're good to go.", time: '10:05 AM' },
+      { role: 'manual', text: "[Switched to Manual Mode] — Mike closed this deal in person. Marking as Closed ✓", time: '10:06 AM' },
+    ]
+  };
+
+  let currentMode = 'ai';
+  let currentConvKey = 'default';
+  let currentMessages = [];
+
+  function showView(view, navEl) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+
+    if (navEl) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      navEl.classList.add('active');
+    }
+
+    const titles = {
+      dashboard: ['Dashboard', 'Welcome back, Mike 👋'],
+      pipeline: ['Leads Pipeline', 'Track and manage every lead from first contact to close'],
+      settings: ['Settings', 'Manage your account and AI preferences'],
+      profile: ['Profile', 'Your account overview']
+    };
+
+    document.getElementById('topbar-title').textContent = titles[view][0];
+    document.getElementById('topbar-sub').textContent = titles[view][1];
+  }
+
+  function openChat(name, source, status, type) {
+    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2);
+    document.getElementById('chat-avatar').textContent = initials;
+    document.getElementById('chat-name').textContent = name;
+    document.getElementById('chat-meta').textContent = source + ' · ' + status;
+
+    currentConvKey = type;
+    currentMessages = [...(conversations[type] || conversations.default)];
+    renderMessages();
+
+    document.getElementById('chat-modal-overlay').classList.add('open');
+    setMode('ai');
+  }
+
+  function renderMessages() {
+    const container = document.getElementById('chat-messages');
+    container.innerHTML = currentMessages.map(m => {
+      if (m.role === 'manual') {
+        return `<div style="text-align:center;font-size:11px;color:var(--text3);padding:6px 12px;background:rgba(255,255,255,0.04);border-radius:8px;margin:4px 0">${m.text}</div>`;
+      }
+      const isAI = m.role === 'ai';
+      return `
+        <div style="display:flex;flex-direction:column;align-items:${isAI ? 'flex-start' : 'flex-end'}">
+          ${isAI ? '<div class="ai-label">⚡ FollowFast AI</div>' : ''}
+          <div class="message ${isAI ? 'ai' : 'user'}">
+            <div class="msg-avatar ${isAI ? 'ai-av' : 'user-av'}">${isAI ? '⚡' : '👤'}</div>
+            <div>
+              <div class="msg-bubble">${m.text}</div>
+              <div class="msg-time">${m.time}</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const now = new Date();
+    const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+    currentMessages.push({ role: 'user', text, time });
+    input.value = '';
+    renderMessages();
+
+    if (currentMode === 'ai') {
+      setTimeout(() => {
+        const replies = [
+          "Got it! Let me check availability and get back to you shortly. 😊",
+          "Thanks for the info! We'll have someone out to you as soon as possible.",
+          "Perfect, I've noted that. Mike will follow up with a quote within the hour.",
+          "Great question! Let me connect you with Mike directly for that. One moment.",
+          "Absolutely, we can help with that. Would morning or afternoon work better for you?"
+        ];
+        const reply = replies[Math.floor(Math.random() * replies.length)];
+        const replyTime = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        currentMessages.push({ role: 'ai', text: reply, time: replyTime });
+        renderMessages();
+      }, 1200);
+    }
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    const aiBtn = document.getElementById('ai-mode-btn');
+    const manualBtn = document.getElementById('manual-mode-btn');
+    if (mode === 'ai') {
+      aiBtn.classList.add('active-mode');
+      manualBtn.classList.remove('active-mode');
+      document.getElementById('chat-input').placeholder = 'AI is active — or type to override...';
+    } else {
+      manualBtn.classList.add('active-mode');
+      aiBtn.classList.remove('active-mode');
+      document.getElementById('chat-input').placeholder = 'Type your manual message...';
+    }
+  }
+
+  function toggleManual() {
+    setMode(currentMode === 'ai' ? 'manual' : 'ai');
+    showNotif(currentMode === 'ai' ? 'AI Mode activated' : 'Manual Mode activated');
+  }
+
+  function closeChat() {
+    document.getElementById('chat-modal-overlay').classList.remove('open');
+  }
+
+  function openAddLead() {
+    document.getElementById('add-modal-overlay').classList.add('open');
+  }
+
+  function closeAddLead() {
+    document.getElementById('add-modal-overlay').classList.remove('open');
+  }
+
+  function saveLead() {
+    const name = document.getElementById('new-name').value.trim();
+    if (!name) { document.getElementById('new-name').focus(); return; }
+    closeAddLead();
+    showNotif('Lead added: ' + name + ' 🎉');
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-phone').value = '';
+    document.getElementById('new-source').value = '';
+  }
+
+  function showNotif(msg) {
+    const notif = document.getElementById('notif');
+    document.getElementById('notif-text').textContent = msg;
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

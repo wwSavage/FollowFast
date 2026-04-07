@@ -689,14 +689,16 @@ async function sendMessage(){
   await sb.from('leads').update({last_activity_at:new Date().toISOString()}).eq('id',currentLead.id);
   const{data}=await sb.from('messages').select('*').eq('lead_id',currentLead.id).order('created_at',{ascending:true});
   renderMessages(data||[]);
-  if(currentMode==='ai'){
-    setTimeout(async()=>{
-      const replies=['Thanks for the info! Are you available for a visit this week?','Got it! We usually have spots within 24-48 hours.','Perfect, one of our team will follow up with a quote shortly.','We can definitely help with that. Would morning or afternoon work better?','Absolutely, we handle that all the time. What is the best number to reach you on?'];
-      const reply=replies[Math.floor(Math.random()*replies.length)];
+if(currentMode==='ai'){
+    try {
+      const{data:history}=await sb.from('messages').select('*').eq('lead_id',currentLead.id).order('created_at',{ascending:true});
+      const msgs=(history||[]).map(m=>({role:m.sender_type==='ai'?'assistant':'user',content:m.content}));
+      const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:msgs,businessName:currentProfile?.business_name||'our business',leadName:currentLead.contact_name})});
+      const{reply}=await res.json();
       await sb.from('messages').insert({lead_id:currentLead.id,user_id:currentUser.id,content:reply,sender_type:'ai'});
       const{data:u}=await sb.from('messages').select('*').eq('lead_id',currentLead.id).order('created_at',{ascending:true});
       renderMessages(u||[]);
-    },1500);
+    } catch(e){ console.error(e); }
   }
 }
 
